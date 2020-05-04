@@ -4,6 +4,8 @@ var mymap = L.map('gamemap').setView([45.785, 4.8778], 15);
 //Initialise le socket
 var socket = io();
 
+var drawings = [];
+
 
 //Osef puissance 3000 verbeux : charge juste une carte en fond avec une clef d'API
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -17,17 +19,28 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 function addLineToMap(color, thickness, locations) {
  	var c = rgbToHex(color);
 	console.log(mymap.getZoom());
-	var w = thickness/* * mymap.getZoom()*0.025*/;
+	var w = thickness*15/20;
  	return L.polyline(locations, {color: c, weight: w}).addTo(mymap);
 }
 
 function addDrawingToMap(drawing) {
+  var lines = [];
 	drawing.lines.forEach(function(line) {
-		addLineToMap(line.color, line.thickness, line.location).bindPopup(drawing.player);
+		lines.push(addLineToMap(line.color, line.thickness, line.location).bindPopup(drawing.player));
 	});
+  return lines;
 }
 
-function rgbToHex (rgb) { 
+/*mymap.on('zoom', function (ev) {
+  for (var i = 0; i < drawings.length; i++) {
+    for (var j = 0; j < drawings[i].length; j++) {
+      console.log(drawings[i][j].options.weight*mymap.getZoom()/20.0)
+        drawings[i][j].setStyle({weight : drawings[i][j].options.weight*mymap.getZoom()/20.0})
+    }
+  }
+});*/
+
+function rgbToHex (rgb) {
   var hex = rgb.toString(16);
   while (hex.length < 6) {
        hex = "0" + hex;
@@ -35,14 +48,11 @@ function rgbToHex (rgb) {
   return "#"+hex;
 };
 
-//ajoute le point à la carte lorsqu'on a une maj
+//ajoute le point ï¿½ la carte lorsqu'on a une maj
 socket.on('drawings_loaded', function(item) {
-	addDrawingToMap(item);
+	drawings.push(addDrawingToMap(item));
 });
 
 socket.on('drawings_updated', function(item) {
-	addDrawingToMap(item.new_val);
+	drawings.push(addDrawingToMap(item.new_val));
 });
-
-
-
