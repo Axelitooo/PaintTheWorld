@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Join us</title>
+		<link rel="stylesheet" type="text/css" href="../style.css"/>
+	<head>
+
+	<body>
+		
+		<header>
+			<div class="imagebox" id="logobox">
+				<a href="../index.html"><img src="../logo.png" alt="our logo" id="logo" /></a>
+			</div>
+			<div class="headerbox" id="concept">
+				<a href="concept.html">Our Concept</a>
+			</div>
+			<div class="imagebox">
+				<img src="../stains1.png" alt="stains1" class="stains" />
+			</div>
+			<div class="headerbox" id="localmap">
+				<a href="localmap.html">See The Map</a>
+			</div>
+			<div class="imagebox">
+				<img src="../stains2.png" alt="stains2" class="stains" />
+			</div>
+			<div class="headerbox" id="login">
+				<a href="login.html">Log In</a>
+			</div>
+			<div class="imagebox">
+				<img src="../stains3.png" alt="stains3" class="stains" />
+			</div>
+			<div class="headerbox" id="signin" style="background-image: url(../selected.png);background-position: center; background-repeat: no-repeat; background-size: calc(20px + 1vh + 1vw)">
+				<a href="signin.html">Join Us</a>
+			</div>
+		</header>
+		<div id="midbox">
+			
+			<form action="/inscription" method="post">
+
+				<h1> Inscription </h1>
+
+				<label class="form_col" for="name">Nom :</label>
+				<input name="name" id="name" type="text" />
+				<span class="tooltip">Invalide</span>
+				<br /><br />
+
+				<label class="form_col" for="p_nom">Prenom :</label>
+				<input name="p_nom" id="p_nom" type="text" />
+				<span class="tooltip">Invalide</span>
+				<br /><br />
+
+				<label class="form_col" for="email">Adresse Email :</label>
+				<input name="email" id="email" type="text" />
+				<span class="tooltip">Sous la forme info@smth.com</span>
+				<br /><br />
+				<label class="form_col" for="login">Pseudo :</label>
+				<input name="login" id="login" type="text" />
+				<span class="tooltip"></span>
+				<br /><br />
+
+				<label class="form_col" for="password1">Mot de passe :</label>
+				<input name="password1" id="password1" type="password" />
+				<span class="tooltip">Le mot de passe est faible</span>
+				<br /><br />
+				<label class="form_col" for="password2">Mdp (confirmation) :</label>
+				<input name="password2" id="password2" type="password" />
+				<span class="tooltip">Les mots de passes ne correspondent pas</span>
+				<br /><br />
+
+
+				<span class="form_col"></span>
+				<input type="submit" value="S'inscrire" />
+
+
+			</form>
+			
+			<script type="text/javascript" src="frontend/inscription.js"></script>
+			<script type="test/javascript" src="app.js"></script>
+
+		</div>
+		
+		<footer>
+			<div class="footerbox" id="contact">
+				<a href="mailto:axel.geonpi@gmx.fr">Email</a>
+			</div>
+		</footer>
+		
+		<script src="/socket.io/socket.io.js"></script>
+		
+	</body>
+	
+</html>
