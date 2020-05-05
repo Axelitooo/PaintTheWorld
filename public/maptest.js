@@ -1,10 +1,8 @@
-//initialise la carte
-var mymap = L.map('gamemap').setView([45.785, 4.8778], 15);
+//initialise la carte en vue en échelle france centrée sur lyon
+var mymap = L.map('gamemap').setView([45.785, 4.8778], 6);
 
 //Initialise le socket
 var socket = io();
-
-var drawings = [];
 
 
 //Osef puissance 3000 verbeux : charge juste une carte en fond avec une clef d'API
@@ -15,31 +13,59 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
         accessToken: 'pk.eyJ1IjoiYW50b2luZXJjYnMiLCJhIjoiY2s2Nm5hdzh2MTExOTNtbXBsbG1qbjc1NSJ9.lyYYPYUi6_L9nsdvNcRudw'
 }).addTo(mymap);
 
+//On demande la localisation du client et on centre/zoom sur sa position
+mymap.locate({setView: true, maxZoom: 18});
+//A chaque changement (déplacement et changement de zoom) on lance onMapBoundsChange
+mymap.on('moveend', onMapBoundsChange);
+mymap.on('zoomend', onMapBoundsChange);
 
+//A chaque changement de zone,
+function onMapBoundsChange(e) {
+  clearMap();
+  socket.emit('bounds_changed',mymap.getBounds());
+}
+
+//Quand des dessins existants sont chargés on les ajoute
+socket.on('drawings_loaded', function(item) {
+	addDrawingToMap(item);
+});
+
+//Quand un nouveau dessin apparait, on l'ajoute
+socket.on('drawings_updated', function(item) {
+	addDrawingToMap(item.new_val);
+  console.log(item.new_val);
+});
+
+//Dessine un dessin en entier
+function addDrawingToMap(drawing) {
+	drawing.lines.forEach(function(line) {
+		addLineToMap(line.color, line.thickness, line.location).bindPopup(drawing.player);
+	});
+}
+
+//Dessine une ligne
 function addLineToMap(color, thickness, locations) {
  	var c = rgbToHex(color);
-	console.log(mymap.getZoom());
-	var w = thickness*15/20;
+	var w = Math.round(thickness*mymap.getZoomScale(mymap.getZoom(), 20));
  	return L.polyline(locations, {color: c, weight: w}).addTo(mymap);
 }
 
-function addDrawingToMap(drawing) {
-  var lines = [];
-	drawing.lines.forEach(function(line) {
-		lines.push(addLineToMap(line.color, line.thickness, line.location).bindPopup(drawing.player));
-	});
-  return lines;
+
+//Néttoie la carte de tous ses dessins
+function clearMap() {
+    for(i in mymap._layers) {
+        if(mymap._layers[i]._path != undefined) {
+            try {
+                mymap.removeLayer(mymap._layers[i]);
+            }
+            catch(e) {
+                console.log("problem with " + e + mymap._layers[i]);
+            }
+        }
+    }
 }
 
-/*mymap.on('zoom', function (ev) {
-  for (var i = 0; i < drawings.length; i++) {
-    for (var j = 0; j < drawings[i].length; j++) {
-      console.log(drawings[i][j].options.weight*mymap.getZoom()/20.0)
-        drawings[i][j].setStyle({weight : drawings[i][j].options.weight*mymap.getZoom()/20.0})
-    }
-  }
-});*/
-
+//Convertie une couleur au format RGBA (int) en un string accepté par leaflet en hexa (eg "#FFFFFF")
 function rgbToHex (rgb) {
   var hex = rgb.toString(16);
   while (hex.length < 6) {
@@ -47,12 +73,3 @@ function rgbToHex (rgb) {
   }
   return "#"+hex;
 };
-
-//ajoute le point � la carte lorsqu'on a une maj
-socket.on('drawings_loaded', function(item) {
-	drawings.push(addDrawingToMap(item));
-});
-
-socket.on('drawings_updated', function(item) {
-	drawings.push(addDrawingToMap(item.new_val));
-});

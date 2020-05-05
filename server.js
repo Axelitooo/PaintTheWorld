@@ -44,50 +44,86 @@ var dbconn;
 
 
 
-//On se connecte � la BD 'test' sur notre serveur en local
+//On se connecte � la BD 'test' sur notre serveur en local
 r.connect({host: 'localhost', port: 28015, db: 'test'})
         .then(conn => {
         	dbconn = conn;
-		scopeForChanges();
 });
-
-
-//D�s qu'un changement intervient sur les points, on envoie la modification � tout le monde.
-function scopeForChanges() {
-	r.table('drawings').changes().run(dbconn, function(err, cursor) {
-		cursor.each(function(err, item) {
-			console.log("New drawing detected !");
-			io.emit("drawings_updated", item); //On envoie � tout le monde
-		});
-	});
-
-
-}
 
 
 //Quand un client se connecte
 io.on('connection', function(socket) {
   	console.log('New connection !');
-	//On envoie tous les dessins de la carte � ce client
-	r.table('drawings').run(dbconn, function(err, cursor) {
-			cursor.each(function(err, item) {
-			socket.emit("drawings_loaded", item); //On n'envoie qu'� ce client
-		});
-	});
-
-
-    //Quand ce client enverra un "new_drawing", on l'ajoute � la BD
+		//Quand ce client enverra un "new_drawing", on l'ajoute � la BD
     socket.on('new_drawing', function(data) {
-	console.log(data);
+				calculateMeanPos(data)
+				console.log(data);
         r.table('drawings').insert(data).run(dbconn, function(err, result) {
     			if (err) throw err;
     			//console.log(JSON.stringify(result, null, 2));
+				});
 		});
 
-	});
-
-
+		//Quand ce client enverra un changement de sa fenêtre d'affichage
+		socket.on('bounds_changed',  function(bounds) {
+			//On récupère les bounds (format leaflet) qu'il envoie
+			var maxLat = bounds._northEast.lat;
+			var minLat = bounds._southWest.lat;
+			var maxLng = bounds._northEast.lng;
+			var minLng = bounds._southWest.lng;
+			//On établit un flitre de requete ReQL pour garder les dessins dans sa zone affichée
+			var filt = r.row("lat").lt(maxLat).and(r.row("lat").gt(minLat).and(r.row("lng").lt(maxLng).and(r.row("lng").gt(minLng))));
+			//On envoie tous les dessins de la zone immédiatement à ce client
+			sendDrawings(socket, filt);
+			if (socket.drawingsChangesCursor != null) { //Si le client écoute des changements sur zone
+				//On essaye de fermer les requètes de changement en écoute en fond
+				socket.drawingsChangesCursor.close().then(function () {
+					//Si on parvient à virer la requete précédente, on lance une veille sur les changements dans la zone
+					console.log("cursor closed")
+					scopeForChanges(socket, filt);
+    		})
+    		.catch(r.Error.ReqlDriverError, function (err) {
+        	console.log("An error occurred on cursor close");
+    		});
+			} else { //Si pas encore de callback, on en lance un
+				scopeForChanges(socket, filt);
+			}
+		});
 });
 
 
+//Lance une détection de changement pour le socket donné avec un filtre donné
+function scopeForChanges(socket, filt) {
+	r.table('drawings').filter(filt).changes().run(dbconn, function(err, cursor) {
+		socket.drawingsChangesCursor = cursor;
+		cursor.each(function(err, item) {
+			console.log("New drawing detected !");
+			socket.emit("drawings_updated", item); //On notifie le client avec le changement
+		});
+	});
+}
 
+//Envoie les dessins en BDD correspondant à un filtre donné à ce socket
+function sendDrawings(socket, filt) {
+	r.table('drawings').filter(filt).run(dbconn, function(err, cursor) {
+			cursor.each(function(err, item) {
+			socket.emit("drawings_loaded", item); //Envoi de chaque dessin de la zone un par un
+		});
+	});
+}
+
+/*Ajoute à un dessin des informations sur so milieu géométrique approximatif*/
+function calculateMeanPos(drawing) {
+	var lat = 0;
+	var lng = 0;
+	var count = 0;
+	drawing.lines.forEach(line => {
+		line.location.forEach(point => {
+			lat+= point[0]
+			lng+= point[1]
+			count++
+		});
+	});
+	drawing.lat = lat/count,
+	drawing.lng = lng/count;
+}
