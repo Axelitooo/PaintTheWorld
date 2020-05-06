@@ -10,7 +10,7 @@
 		<script src="../leaflet/leaflet.js"></script>
 	<head>
 
-	<body>
+	<body onload = "initElement();">
 		
 		<header>
 			<div class="imagebox" id="logobox">
@@ -45,10 +45,24 @@
 			<div class="footerbox" id="contact">
 				<a href="mailto:axel.geonpi@gmx.fr">Email</a>
 			</div>
+			<div class="footerbox" id="contact">
+				<button id = "button1">I am the button</button>
+			</div>
 		</footer>
 		
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="../maptest.js"></script>
+		<script src="drawing.js"></script>
+		<script type="text/javascript">
+			function initElement() {
+				var button = document.getElementById("button1");
+				button.onclick = centerOnDrawing;
+			}
+			
+			function centerOnDrawing() {
+				mymap.setView([drawing.lat, drawing.lng], 19);
+			}
+		</script>
 		
 	</body>
 	
