@@ -16,6 +16,9 @@ const credentials = {
 	ca: ca
 };
 
+var redirectToHTTPS = require('express-http-to-https').redirectToHTTPS
+app.use(redirectToHTTPS());
+
 
 //On fourni au client (web) tous les fichiers dans le dossier "public"
 //app.use(sslRedirect());
@@ -79,7 +82,7 @@ io.on('connection', function(socket) {
 				//On essaye de fermer les requètes de changement en écoute en fond
 				socket.drawingsChangesCursor.close().then(function () {
 					//Si on parvient à virer la requete précédente, on lance une veille sur les changements dans la zone
-					console.log("cursor closed")
+					//console.log("cursor closed")
 					scopeForChanges(socket, filt);
     		})
     		.catch(r.Error.ReqlDriverError, function (err) {
