@@ -66,6 +66,7 @@ a:hover {
 	justify-content: space-around;
 	align-items: center;
 	height: 82vh;
+	border: black solid;
 }
 
 .conceptbox {
@@ -101,6 +102,39 @@ a:hover {
 .conceptphrase {
 	margin-left: 3vW;
 	font-size:calc(6px + 0.6vw);
+}
+
+.vizbox {
+	line-height: 12vh;
+	height: 78vh;
+	width: 80vw;
+	border: black solid;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.scrollist {
+	height:78vh; 
+	width:10vw;
+	overflow:hidden; 
+	overflow-y:scroll;
+	border:black solid;
+}
+
+.mydrawing {
+	border: black solid;
+	height: 60vh;
+	width: 70vw;
+}
+
+.details {
+	position: relative;
+	border: solid black;
+	width: 70vw;
+	height: 10vh;
 }
 
 footer {
