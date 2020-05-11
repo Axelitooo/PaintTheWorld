@@ -1,9 +1,9 @@
 function add(buttonNumber, drawing) {
-	var element = document.createElement("LI");
-	var button = document.createElement("BUTTON");
-	button.innerHTML = "I am button " + buttonNumber;
+	var element = document.createElement("span");
+	var button = document.createElement("button");
+	button.innerHTML = "Drawing " + buttonNumber;
 	element.appendChild(button);
-	document.getElementById("list").appendChild(element);
+	document.getElementById("nav").appendChild(element);
 	button.onclick = function () {
 		mymap.setView([drawing.lat, drawing.lng], 19);
 	}
