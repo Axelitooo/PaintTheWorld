@@ -1,5 +1,5 @@
-get_player_drawings(RootUser42);
-
+getPlayerDrawings("RootUser42");
+var inc = 0
 socket.on('player_drawings_loaded', function(drawing) {
-	add(button, 1, drawing);
+	add(inc++, drawing);
 });
