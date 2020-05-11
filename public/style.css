@@ -110,7 +110,7 @@ a:hover {
 	justify-content: space-between;
 	align-items: center;
 	height: 82vh;
-	margin-right: 2vw;
+	margin-right: 1vw;
 }
 
 .vizbox {
@@ -122,11 +122,10 @@ nav {
 	height:81vh; 
 	width:12vw;
 	overflow:hidden; 
-	height:78vh;
-	width:10vw;
+	height:80vh;
+	width:13vw;
 	overflow:hidden;
 	overflow-y:scroll;
-	border:none;
 	text-align: center;
 }
 
@@ -144,7 +143,7 @@ button {
 	background-image: url("./subpages/list.png");
 	background-position: center;
 	background-repeat: no-repeat; 
-	background-size: 10vw;
+	background-size: 8vw;
 	border-radius: 2vh;
 	margin-bottom: 2vh;
 }
