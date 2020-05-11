@@ -13,6 +13,9 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
         accessToken: 'pk.eyJ1IjoiYW50b2luZXJjYnMiLCJhIjoiY2s2Nm5hdzh2MTExOTNtbXBsbG1qbjc1NSJ9.lyYYPYUi6_L9nsdvNcRudw'
 }).addTo(mymap);
 
+var markerLayer = L.layerGroup().addTo(mymap);
+
+
 //On demande la localisation du client et on centre/zoom sur sa position
 mymap.locate({setView: true, maxZoom: 18});
 //A chaque changement (déplacement et changement de zoom) on lance onMapBoundsChange
@@ -25,21 +28,39 @@ function onMapBoundsChange(e) {
   socket.emit('bounds_changed',mymap.getBounds());
 }
 
+function getPlayerDrawings(player) {
+  socket.emit('get_player_drawings', player);
+}
+
 //Quand des dessins existants sont chargés on les ajoute
 socket.on('drawings_loaded', function(item) {
 	addDrawingToMap(item);
 });
 
+//Quand des dessins existants sont chargés on les ajoute
+socket.on('drawings_cluster_loaded', function(item) {
+  addDrawingClustersToMap(item.centroid, item.count)
+});
+
 //Quand un nouveau dessin apparait, on l'ajoute
 socket.on('drawings_updated', function(item) {
 	addDrawingToMap(item.new_val);
-  console.log(item.new_val);
 });
+
+function addDrawingClustersToMap(centroid, count) {
+  L.marker(centroid, {
+  icon: L.divIcon({
+      className: 'unzoomed-map-marker',
+      html: count
+    })
+  }).addTo(markerLayer);
+}
 
 //Dessine un dessin en entier
 function addDrawingToMap(drawing) {
+  var popupContent = "Dessiné par : <b>" + drawing.player + "</b></br> Date :" + drawing.datetime;
 	drawing.lines.forEach(function(line) {
-		addLineToMap(line.color, line.thickness, line.location).bindPopup(drawing.player);
+		addLineToMap(line.color, line.thickness, line.location).bindPopup(popupContent);
 	});
 }
 
@@ -53,6 +74,7 @@ function addLineToMap(color, thickness, locations) {
 
 //Néttoie la carte de tous ses dessins
 function clearMap() {
+    markerLayer.clearLayers()
     for(i in mymap._layers) {
         if(mymap._layers[i]._path != undefined) {
             try {

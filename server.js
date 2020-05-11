@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const https = require('https');
+const kmeans = require('node-kmeans');
 
 
 // Certificate
@@ -56,7 +57,7 @@ r.connect({host: 'localhost', port: 28015, db: 'test'})
 
 //Quand un client se connecte
 io.on('connection', function(socket) {
-  	console.log('New connection !');
+  	//console.log('New connection !');
 		//Quand ce client enverra un "new_drawing", on l'ajoute � la BD
     socket.on('new_drawing', function(data) {
 				calculateMeanPos(data)
@@ -66,6 +67,10 @@ io.on('connection', function(socket) {
     			//console.log(JSON.stringify(result, null, 2));
 				});
 		});
+		socket.on('get_player_drawings', function(player) {
+			var filt = r.row("player").eq(player);
+			sendDrawings(socket, filt, "player_drawings_loaded");
+		});
 
 		//Quand ce client enverra un changement de sa fenêtre d'affichage
 		socket.on('bounds_changed',  function(bounds) {
@@ -74,23 +79,28 @@ io.on('connection', function(socket) {
 			var minLat = bounds._southWest.lat;
 			var maxLng = bounds._northEast.lng;
 			var minLng = bounds._southWest.lng;
-			//On établit un flitre de requete ReQL pour garder les dessins dans sa zone affichée
 			var filt = r.row("lat").lt(maxLat).and(r.row("lat").gt(minLat).and(r.row("lng").lt(maxLng).and(r.row("lng").gt(minLng))));
-			//On envoie tous les dessins de la zone immédiatement à ce client
-			sendDrawings(socket, filt);
-			if (socket.drawingsChangesCursor != null) { //Si le client écoute des changements sur zone
-				//On essaye de fermer les requètes de changement en écoute en fond
-				socket.drawingsChangesCursor.close().then(function () {
-					//Si on parvient à virer la requete précédente, on lance une veille sur les changements dans la zone
-					//console.log("cursor closed")
+			//On établit un flitre de requete ReQL pour garder les dessins dans sa zone affichée
+			if (Math.abs(maxLat-minLat)>0.02) {
+				sendDrawingsClusters(socket, filt, "drawings_cluster_loaded");
+			} else {
+				//On envoie tous les dessins de la zone immédiatement à ce client
+				sendDrawings(socket, filt, "drawings_loaded");
+				if (socket.drawingsChangesCursor != null) { //Si le client écoute des changements sur zone
+					//On essaye de fermer les requètes de changement en écoute en fond
+					socket.drawingsChangesCursor.close().then(function () {
+						//Si on parvient à virer la requete précédente, on lance une veille sur les changements dans la zone
+						//console.log("cursor closed")
+						scopeForChanges(socket, filt);
+	    		})
+	    		.catch(r.Error.ReqlDriverError, function (err) {
+	        	console.log("An error occurred on cursor close");
+	    		});
+				} else { //Si pas encore de callback, on en lance un
 					scopeForChanges(socket, filt);
-    		})
-    		.catch(r.Error.ReqlDriverError, function (err) {
-        	console.log("An error occurred on cursor close");
-    		});
-			} else { //Si pas encore de callback, on en lance un
-				scopeForChanges(socket, filt);
+				}
 			}
+
 		});
 });
 
@@ -107,15 +117,42 @@ function scopeForChanges(socket, filt) {
 }
 
 //Envoie les dessins en BDD correspondant à un filtre donné à ce socket
-function sendDrawings(socket, filt) {
+function sendDrawings(socket, filt, msg) {
 	r.table('drawings').filter(filt).run(dbconn, function(err, cursor) {
-			cursor.each(function(err, item) {
-			socket.emit("drawings_loaded", item); //Envoi de chaque dessin de la zone un par un
+		cursor.each(function(err, item) {
+			socket.emit(msg, item); //Envoi de chaque dessin de la zone un par un
 		});
 	});
 }
 
-/*Ajoute à un dessin des informations sur so milieu géométrique approximatif*/
+//Envoie le nombre de dessins en BDD correspondant à un filtre donné à ce socket
+function sendDrawingsClusters(socket, filt, msg) {
+
+	r.table('drawings').pluck("lat", "lng").filter(filt).run(dbconn, function(err, cursor) {
+
+		cursor.toArray(function (err, data) {
+			let vectors = new Array();
+			for (let i = 0 ; i < data.length ; i++) {
+  			vectors[i] = [ data[i]['lat'] , data[i]['lng']];
+			}
+			if (vectors.length >= 1) {
+				kmeans.clusterize(vectors, {k: ((vectors.length<6)?vectors.length:6)}, (err,res) => {
+			  	if (err) console.error(err);
+			  	else {
+						res.forEach(res => {
+							socket.emit(msg, {centroid : res.centroid, count : res.cluster.length})
+						});
+					}
+				});
+			}
+		});
+
+	});
+
+
+}
+
+/*Ajoute à un dessin des informations sur so milieu géométrique approximatif (barycentre)*/
 function calculateMeanPos(drawing) {
 	var lat = 0;
 	var lng = 0;
