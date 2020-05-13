@@ -139,11 +139,6 @@ button {
 	cursor: pointer;
 	font-family: 'importedSegoePrint';
 	color: black;
-	background-color: white;
-	background-image: url("./subpages/list.png");
-	background-position: center;
-	background-repeat: no-repeat; 
-	background-size: 8vw;
 	border-radius: 2vh;
 	margin-bottom: 2vh;
 }

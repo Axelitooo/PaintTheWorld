@@ -5,6 +5,7 @@ const app = express();
 const http = require('http');
 const https = require('https');
 const kmeans = require('node-kmeans');
+const supercluster = require('supercluster');
 
 
 // Certificate
@@ -71,6 +72,9 @@ io.on('connection', function(socket) {
 			var filt = r.row("player").eq(player);
 			sendDrawings(socket, filt, "player_drawings_loaded");
 		});
+		socket.on('get_random_drawing', function() {
+			sendRandomDrawing(socket, 'random_drawing_loaded')
+		});
 
 		//Quand ce client enverra un changement de sa fenêtre d'affichage
 		socket.on('bounds_changed',  function(bounds) {
@@ -81,8 +85,8 @@ io.on('connection', function(socket) {
 			var minLng = bounds._southWest.lng;
 			var filt = r.row("lat").lt(maxLat).and(r.row("lat").gt(minLat).and(r.row("lng").lt(maxLng).and(r.row("lng").gt(minLng))));
 			//On établit un flitre de requete ReQL pour garder les dessins dans sa zone affichée
-			if (Math.abs(maxLat-minLat)>0.02) {
-				sendDrawingsClusters(socket, filt, "drawings_cluster_loaded");
+			if (bounds.zoom < 15) {
+				sendDrawingsClusters(socket, filt, bounds, "drawings_cluster_loaded");
 			} else {
 				//On envoie tous les dessins de la zone immédiatement à ce client
 				sendDrawings(socket, filt, "drawings_loaded");
@@ -125,18 +129,31 @@ function sendDrawings(socket, filt, msg) {
 	});
 }
 
-//Envoie le nombre de dessins en BDD correspondant à un filtre donné à ce socket
-function sendDrawingsClusters(socket, filt, msg) {
+function sendRandomDrawing(socket, msg) {
+	r.table('drawings').sample(1).run(dbconn, function(err, cursor) {
+		cursor.each(function(err, item) {
+			socket.emit(msg, item); //Envoi de chaque dessin de la zone un par un
+		});
+	});
+}
 
+//Envoie le nombre de dessins en BDD correspondant à un filtre donné à ce socket
+function sendDrawingsClusters(socket, filt, bounds, msg) {
 	r.table('drawings').pluck("lat", "lng").filter(filt).run(dbconn, function(err, cursor) {
 
 		cursor.toArray(function (err, data) {
 			let vectors = new Array();
 			for (let i = 0 ; i < data.length ; i++) {
-  			vectors[i] = [ data[i]['lat'] , data[i]['lng']];
+				vectors[i] = {"type": "Feature","geometry": {
+						"type": "Point","coordinates": [data[i]['lat'], data[i]['lng']]
+	  				}
+				};
 			}
-			if (vectors.length >= 1) {
-				kmeans.clusterize(vectors, {k: ((vectors.length<6)?vectors.length:6)}, (err,res) => {
+			/*if (vectors.length >= 1) {
+				let sc = Supercluster({radius: 40, maxZoom: 16}).load(vectors);
+				let clusters = sc.getClusters([bounds._southWest.lng, bounds._southWest.lat, bounds._northEast.lng, bounds._northEast.lat], bounds.zoom);
+				console.log(clusters);
+				/*kmeans.clusterize(vectors, {k: ((vectors.length<6)?vectors.length:6)}, (err,res) => {
 			  	if (err) console.error(err);
 			  	else {
 						res.forEach(res => {
@@ -144,7 +161,7 @@ function sendDrawingsClusters(socket, filt, msg) {
 						});
 					}
 				});
-			}
+			}*/
 		});
 
 	});

@@ -25,7 +25,9 @@ mymap.on('zoomend', onMapBoundsChange);
 //A chaque changement de zone,
 function onMapBoundsChange(e) {
   clearMap();
-  socket.emit('bounds_changed',mymap.getBounds());
+  let b = mymap.getBounds();
+  b.zoom = mymap.getZoom();
+  socket.emit('bounds_changed', b);
 }
 
 function getPlayerDrawings(player) {
