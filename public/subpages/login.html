@@ -39,17 +39,19 @@
 		<div id="midbox">
 			<form id="myForm">
 
-				<label class="form_col" for="login">Pseudo :</label>
-				<input name="login" id="login" type="text" />
-				<br /><br />
+				<label class="form_col" for="login">
+					<div style="background-image: url(blue.jpeg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Username</div>
+					<input name="login" id="login" type="text" placeholder="Your username" />
+				</label>
 
-				<label class="form_col" for="pwd1">Mot de passe :</label>
-				<input name="pwd1" id="pwd1" type="password" />
-				<span class="form_col"></span>
-				<br><br>
+				<label class="form_col" for="pwd1">
+					<div style="background-image: url(red.jpeg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Password</div>
+					<input name="pwd1" id="pwd1" type="password" placeholder="Your password" />
+				</label>
 				
-				<span class="form_col"></span>
-				<input class = 'connect_button' type="submit" value="Se connecter" />
+				<label class="form_col">
+					<input class = 'connect_button' type="submit" value="Login" />
+				</label>
 
 			</form>
 				<script type="text/javascript" src="inscription.js"></script>
