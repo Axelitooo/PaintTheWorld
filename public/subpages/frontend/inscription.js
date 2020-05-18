@@ -68,9 +68,9 @@ check['email'] = function(id) {
 
 
 
-check['login'] = function() {
+check['username'] = function() {
 
-    var login = document.getElementById('login'),
+    var login = document.getElementById('username'),
         tooltipStyle = getTooltip(login).style;
 
     if (login.value.length >= 4) {
