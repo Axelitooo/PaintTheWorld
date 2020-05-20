@@ -182,7 +182,7 @@ form {
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-	border: black solid;
+	/*border: black solid;*/
 }
 
 .form_col {
@@ -193,7 +193,8 @@ form {
 	justify-content: center;
 	height: 10vh;
 	width: 80vw;
-	border: green solid;
+	color: black;
+	/*border: green solid;*/
 }
 
 input {	
@@ -207,6 +208,7 @@ input {
 	text-align: center;
 	padding: 1vh;
 	background-image: url("./subpages/champViolet.png");
+	opacity: 0.8;
 	background-position: center;
 	background-repeat: no-repeat; 
 	background-size: 20vw 5vh;
@@ -214,8 +216,8 @@ input {
 }
 
 /*input:focus {
-/* 	border-color: rgba(82, 168, 236, 0.75); */
-/* 	box-shadow: 0 0 8px rgba(82, 168, 236, 0.5); */
+ 	border-color: rgba(82, 168, 236, 0.75);
+ 	box-shadow: 0 0 8px rgba(82, 168, 236, 0.5);
 }*/
 
 .connect_button {
@@ -229,14 +231,14 @@ input {
 	font-family: 'importedSegoePrint';
 	color: white;
 	background-color: white;
-	background-image: url("./subpages/connect.jpg");
+	background-image: url(./subpages/login.jpg);
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 18vh;
 }
 
 .connect_button:hover {
-	opacity: 0.7;
+	opacity: 0.6;
 }
 
 .connect_button:active{
@@ -247,6 +249,7 @@ input {
 	background-image: url("./subpages/champVert.png");
 	background-position: center;
 	background-repeat: no-repeat;
+	opacity: 0.6;
 }
 
 /*.correct:focus {
@@ -258,7 +261,7 @@ input {
 	background-image: url("./subpages/champRouge.png");
 	background-position: center;
 	background-repeat: no-repeat;
-	opacity: 0.7;
+	opacity: 0.6;
 }
 
 /*.incorrect:focus {

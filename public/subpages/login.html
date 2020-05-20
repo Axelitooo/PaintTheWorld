@@ -8,7 +8,7 @@
 	<head>
 
 	<body>
-		
+
 		<header>
 			<div class="imagebox" id="logobox">
 				<a href="../index.html"><img src="../logo.png" alt="our logo" id="logo" /></a>
@@ -35,36 +35,37 @@
 				<a href="signin.html">Join Us</a>
 			</div>
 		</header>
-		
+
 		<div id="midbox">
 			<form id="myForm">
 
 				<label class="form_col" for="login">
 					<div style="background-image: url(blue.jpeg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Username</div>
 					<input name="login" id="login" type="text" placeholder="Your username" />
+					<a href="/auth/facebook">Login with Facebook</a>
 				</label>
 
 				<label class="form_col" for="pwd1">
 					<div style="background-image: url(red.jpeg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Password</div>
 					<input name="pwd1" id="pwd1" type="password" placeholder="Your password" />
 				</label>
-				
+
 				<label class="form_col">
-					<input class = 'connect_button' type="submit" value="Login" />
+					<input class = "connect_button" type="submit" value="Login" />
 				</label>
 
 			</form>
 				<script type="text/javascript" src="inscription.js"></script>
 		</div>
-		
+
 		<footer>
 			<div class="footerbox" id="contact">
 				<a href="mailto:axel.geonpi@gmx.fr">Email</a>
 			</div>
 		</footer>
-		
+
 		<script src="/socket.io/socket.io.js"></script>
-		
+
 	</body>
-	
+
 </html>
