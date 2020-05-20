@@ -129,6 +129,7 @@ nav {
 	text-align: center;
 }
 
+
 button {
 	display: inline-block;
 	border: none;
@@ -141,7 +142,9 @@ button {
 	color: black;
 	border-radius: 2vh;
 	margin-bottom: 2vh;
+	background-color: white; /*ça je l'ai modifié*/
 }
+
 
 button:hover {
 	opacity: 0.7;
@@ -171,7 +174,7 @@ footer {
 	line-height: 4vh;
 }
 
-/*ELAHDJI*/
+/*Base ELAHDJI*/
 
 form {
 	display: flex;
@@ -179,7 +182,6 @@ form {
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-	border: black solid;
 }
 
 .form_col {
@@ -190,7 +192,7 @@ form {
 	justify-content: center;
 	height: 10vh;
 	width: 80vw;
-	border: green solid;
+	color: black;
 }
 
 input {	
@@ -203,37 +205,33 @@ input {
 	font-size: 2vh;
 	text-align: center;
 	padding: 1vh;
-	background-image: url("./subpages/champViolet.png");
+	background-image: url("./images/champViolet.jpg");
+	opacity: 0.8;
 	background-position: center;
 	background-repeat: no-repeat; 
 	background-size: 20vw 5vh;
 	transition: all 0.5s ease-out;
 }
 
-/*input:focus {
-/* 	border-color: rgba(82, 168, 236, 0.75); */
-/* 	box-shadow: 0 0 8px rgba(82, 168, 236, 0.5); */
-}*/
-
 .connect_button {
 	display: inline-block;
 	border: none;
 	text-align: center;
 	font-size: 2vh;
-	padding: 2vh 3vw;
+	padding: 3vh 3vw;
 	transition: all 0.5s ease-out;
 	cursor: pointer;
 	font-family: 'importedSegoePrint';
 	color: white;
 	background-color: white;
-	background-image: url("./subpages/connect.jpg");
+	background-image: url("./images/login.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 18vh;
 }
 
 .connect_button:hover {
-	opacity: 0.7;
+	opacity: 0.6;
 }
 
 .connect_button:active{
@@ -241,27 +239,18 @@ input {
 }
 
 .correct {
-	background-image: url("./subpages/champVert.png");
+	background-image: url("./images/champVert.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
+	opacity: 0.6;
 }
-
-/*.correct:focus {
-	border-color: yellow;
-	box-shadow: 0 0 8px rgba(68, 191, 68, 0.5);
-}*/
 
 .incorrect {
-	background-image: url("./subpages/champRouge.png");
+	background-image: url("./images/champRouge.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
-	opacity: 0.7;
+	opacity: 0.6;
 }
-
-/*.incorrect:focus {
-	border-color: rgba(191, 68, 68, 0.75);
-	box-shadow: 0 0 8px rgba(191, 68, 68, 0.5);
-}*/
 
 .tooltip {
 	display: inline-block;
@@ -271,7 +260,6 @@ input {
 	background-color: #CCC;
 	border-radius: 4px;
 }
-
 
 .unzoomed-map-marker{
   width: 24px !important;

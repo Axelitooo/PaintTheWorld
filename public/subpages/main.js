@@ -2,6 +2,7 @@
 
 var random = document.createElement("button");
 random.innerHTML = "Random !";
+random.setAttribute("style", "background-image: url(stains/7.jpg); background-position: center; background-repeat: no-repeat; background-size: calc(10px + 1.6vh + 0.9vw);");
 document.getElementById("menu").appendChild(random);
 
 random.onclick = function () {
@@ -18,6 +19,7 @@ function add(buttonNumber, drawing) {
 	var div = document.createElement("div");
 	var drawingDiv = document.createElement("div");
 	var button = document.createElement("button");
+	button.setAttribute("style", "background-image: url(stains/" + getRandomInt(6) + ".jpg); background-position: center; background-repeat: no-repeat; background-size: calc(20px + 3.2vh + 1.8vw);");
 	button.innerHTML = "Drawing " + buttonNumber;
 	div.appendChild(button);
 
@@ -59,12 +61,6 @@ socket.on('player_drawings_loaded', function(drawing) {
 	add(inc++, drawing);
 });
 
-// Stains
-
-// for (var i = 1; i <= buttonNumber; i++) { /*28 => buttonNumber*/
-//	document.getElementById("button" + string(i)).setAttribute("style", "background-image: url(stains/" + string(getRandomInt(9)) + ".jpg); background-position: center; background-repeat: no-repeat; background-size: calc(28px + 1.4vh + 1.4vw);");
-// }
-
-// function getRandomInt(max) {
-//	return 1 + Math.floor(Math.random() * Math.floor(max));
-//}
+function getRandomInt(max) {
+	return 1 + Math.floor(Math.random() * Math.floor(max));
+}
