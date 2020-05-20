@@ -7,7 +7,7 @@
 	<head>
 
 	<body>
-		
+
 		<header>
 			<div class="imagebox" id="logobox">
 				<a href="../index.html"><img src="../images/logo.jpg" alt="our logo" id="logo" /></a>
@@ -35,7 +35,7 @@
 			</div>
 		</header>
 		<div id="midbox">
-			
+
 			<form id= "myForm" action="/inscription" method="post">
 
 				<label class="form_col" for="name">
@@ -52,7 +52,7 @@
 					<div style="background-image: url(../images/red.jpg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Email @</div>
 					<input name="email" id="email" type="text" placeholder="johndoe@example.com"/>
 				</label>
-				
+
 				<label class="form_col" for="username">
 					<div style="background-image: url(../images/pink.jpg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Username</div>
 					<input name="username" id="username" type="text" placeholder="JohnD"/>
@@ -62,32 +62,31 @@
 					<div style="background-image: url(../images/orange.jpg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Password</div>
 					<input name="password1" id="password1" type="password" placeholder="John's password"/>
 				</label>
-				
+
 				<label class="form_col" for="password2">
 					<div style="background-image: url(../images/purple.jpg); background-position: center; background-repeat: no-repeat; background-size: 15vh; padding: 3vh 4vw; margin-right: 5vw; font-size: 2vh">Confirm</div>
 					<input name="password2" id="password2" type="password" placeholder="John's password"/>
 				</label>
-				
+
 				<label class="form_col">
 					<input class = 'connect_button' type="submit" value="Signin" />
 				</label>
 
 
 			</form>
-			
-			<script type="text/javascript" src="frontend/inscription.js"></script>
-			<script type="test/javascript" src="app.js"></script>
+
+			<script type="text/javascript" src="subpages/frontend/inscription.js"></script>
 
 		</div>
-		
+
 		<footer>
 			<div class="footerbox" id="contact">
 				<a href="mailto:axel.geonpi@gmx.fr">Email</a>
 			</div>
 		</footer>
-		
+
 		<script src="/socket.io/socket.io.js"></script>
-		
+
 	</body>
-	
+
 </html>

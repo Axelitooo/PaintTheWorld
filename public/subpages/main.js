@@ -24,7 +24,7 @@ function add(buttonNumber, drawing) {
 	div.appendChild(button);
 
 	div.appendChild(drawingDiv);
-	var draw = SVG().addTo(drawingDiv).size(300, 300)
+	var draw = SVG().addTo(drawingDiv).size(200, 150)
 	convertLinesToAbsolute(drawing)
 	drawing.lines.forEach(line => {
 		var polyline = draw.polyline(line.location)
@@ -38,16 +38,16 @@ function add(buttonNumber, drawing) {
 	}
 }
 function convertLinesToAbsolute(drawing) {
-	var minX = 3000, minY = 3000;
+	var maxX = -3000, minY = 3000;
 	drawing.lines.forEach(line => {
 		line.location.forEach(loc => {
-			if (loc[0]< minX) minX = loc[0]
+			if (loc[0]> maxX) maxX = loc[0]
 			if (loc[1]< minY) minY = loc[1]
 		});
 	});
 	drawing.lines.forEach(line => {
 		line.location.forEach((loc, i) => {
-			line.location[i] = [(loc[1]-minY)*100000,(loc[0]-minX)*100000]
+			line.location[i] = [(loc[1]-minY)*100000 + 2,(maxX-loc[0])*100000 + 2]
 		});
 	});
 
