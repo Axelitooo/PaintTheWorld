@@ -7,7 +7,6 @@ const https = require('https');
 const kmeans = require('node-kmeans');
 const supercluster = require('supercluster');
 
-
 // Certificate
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/paint.antoine-rcbs.ovh/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('/etc/letsencrypt/live/paint.antoine-rcbs.ovh/cert.pem', 'utf8');
@@ -18,6 +17,7 @@ const credentials = {
 	ca: ca
 };
 
+//Redirection HTTP > HTTPS
 var redirectToHTTPS = require('express-http-to-https').redirectToHTTPS
 app.use(redirectToHTTPS());
 
@@ -29,6 +29,35 @@ app.use(express.static('public', { dotfiles: 'allow' }));
 //On ouvre une connexion http sur le port 80 et https sur 443
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
+
+
+/*var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
+
+
+passport.use(new FacebookStrategy({
+	  clientID: "531127074233558",
+	  clientSecret: "9ee72e56592656c32131840d6932e92f",
+	  callbackURL: "https://paint.antoine-rcbs.ovh/auth/facebook/callback"
+	},
+	function(accessToken, refreshToken, profile, done) {
+	  User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+	    if (err) { return done(err); }
+	    done(null, user);
+	  });
+	 }
+));
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback',
+passport.authenticate('facebook', { failureRedirect: '/login' }),
+function(req, res) {
+ // Successful authentication, redirect home.
+ res.redirect('/');
+});*/
+
+
 
 httpServer.listen(80, () => {
 	console.log('HTTP Server running on port 80');
@@ -54,6 +83,17 @@ r.connect({host: 'localhost', port: 28015, db: 'test'})
         .then(conn => {
         	dbconn = conn;
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Quand un client se connecte

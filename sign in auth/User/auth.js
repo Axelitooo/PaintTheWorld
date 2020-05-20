@@ -68,15 +68,19 @@ passport.deserializeUser(function(id, done){
 
 /* La fonction permettant e hash le mot de passe pour sécuriser la bdd */
 
-generateHash = function(password){
-    return bcryptjs.hashSync(password, bcryptjs.genSaltSync(10), null);
+function generateHash(password){
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(password, salt);
+    return hash;
 };
 
 /* La fonction pour verifier la conformité des mots de passe
 celui du login et celui hasher qui est sur la bdd */
 
-validPassword = function(password){
-    return bcryptjs.compareSync(password, bcryptjs.hashSync(this.password));
+function validPassword (password, passwordTyped){
+    console.log(password)
+    console.log("this ", passwordTyped )
+    return bcryptjs.compareSync(passwordTyped, password);
 };
 
 
@@ -98,14 +102,14 @@ app.post('/inscription', function(req,res){
         && (req.body.password1 == req.body.password2)
         && (regex.test(req.body.email))
         && (strongRegex.test(req.body.password1))
-        && (req.body.password1.length >= 12)){
+        && (req.body.password1.length >= 8)){
 
     var data = {
         "name": name,
         "p_nom": p_nom,
         "email": email,
         "username": username,
-        "password": pass1
+        "password": generateHash(pass1)
         }
     }else{
         res.send("Error. Please respect the seizure rules ! ");
@@ -134,15 +138,16 @@ const LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(
     function(username, password, done){
         User.findOne({
-            login: username
+            username: username
         }, function(err, user){
+          console.log(user)
             if(err){
                 return done(err);
             }
             if(!user){
                 return done(null, false);
             }
-            if(user.password != password){
+            if(!validPassword(user.password, password)){
                 return done(null, false);
             }
             return done(null, user);
@@ -158,5 +163,5 @@ app.post('/login',
     res.redirect('/success?username='+req.body.username);
   });
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port , () => console.log('App listening on port ' + port));
