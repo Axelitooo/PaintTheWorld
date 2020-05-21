@@ -8,32 +8,7 @@
 
 	<body>
 
-		<header>
-			<div class="imagebox" id="logobox">
-				<a href="/"><img src="../images/logo.jpg" alt="our logo" id="logo" /></a>
-			</div>
-			<div class="headerbox" id="concept">
-				<a href="/concept">Concept</a>
-			</div>
-			<div class="imagebox">
-				<img src="../images/stains1.jpg" alt="stains1" class="stains" />
-			</div>
-			<div class="headerbox" id="localmap">
-				<a href="/drawings">Drawings</a>
-			</div>
-			<div class="imagebox">
-				<img src="../images/stains2.jpg" alt="stains2" class="stains" />
-			</div>
-			<div class="headerbox" id="signin" style="background-image: url(../images/selected.jpg);background-position: center; background-repeat: no-repeat; background-size: calc(20px + 1vh + 1vw)">
-				<a href="/signin">Sign in</a>
-			</div>
-			<div class="imagebox">
-				<img src="../images/stains3.jpg" alt="stains3" class="stains" />
-			</div>
-			<div class="headerbox" id="login">
-				<a href="/login">Log in</a>
-			</div>
-		</header>
+    <%-include ('../partials/header') %>
 		<div id="midbox">
 
 			<form id= "myForm" action="/inscription" method="post">
@@ -79,11 +54,8 @@
 
 		</div>
 
-		<footer>
-			<div class="footerbox" id="contact">
-				<a href="mailto:axel.geonpi@gmx.fr">Email</a>
-			</div>
-		</footer>
+		<%-include ('../partials/footer') %>
+		
 
 
 	</body>

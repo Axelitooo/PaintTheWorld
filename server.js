@@ -3,7 +3,6 @@ const fs = require('fs');
 const express = require('express');
 const http = require('http');
 const https = require('https');
-const kmeans = require('node-kmeans');
 const supercluster = require('supercluster');
 const bodyParser = require('body-parser');
 var path = require('path');
@@ -15,6 +14,7 @@ const passportSocketIo = require("passport.socketio");
 const app = express();
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
+app.set('view engine', 'ejs');
 const router = express.Router();
 
 
@@ -72,30 +72,54 @@ r.connect({host: 'localhost', port: 28015, db: 'test'})
 const store = new RDBStore(rdash);
 
 /* on config express */
+app.use(session({
+  secret: 'paint-the-world', resave: false, store: store,
+  saveUninitialized: false, cookie: {maxAge: 1000 * 60 * 15}}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(session({
-  secret: 'paint-the-world', resave: true, store: store,
-  saveUninitialized: false, cookie: {maxAge: 1000 * 60 * 15}}));
+
 
 
 //On fourni au client (web) tous les fichiers dans le dossier "public"
 //app.use(sslRedirect());
 app.use(express.static('public', { dotfiles: 'allow' }));
+app.set('views', path.join(__dirname, '/public'));
 
 /* Gestion des routes */
 
+
+app.get('/', function(req, res){
+				let un = (req.user)?req.user.username:null;
+				let pps = (req.user)?req.user.permanant_paint_stock:null;
+				let tps = (req.user)?req.user.temporary_paint_stock:null;
+				res.render('index', {page_name:'index', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps});
+			});
+
 app.get('/concept', function(req, res){
-				res.sendFile(path.join(__dirname, '/public/subpages/concept.html'))});
+	let un = (req.user)?req.user.username:null;
+	let pps = (req.user)?req.user.permanant_paint_stock:null;
+	let tps = (req.user)?req.user.temporary_paint_stock:null;
+				res.render('subpages/concept', {page_name:'concept', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps});
+			});
 
 app.get('/drawings', function(req, res){
-				res.sendFile(path.join(__dirname, '/public/subpages/localmap.html'))});
+	let un = (req.user)?req.user.username:null;
+	let pps = (req.user)?req.user.permanant_paint_stock:null;
+	let tps = (req.user)?req.user.temporary_paint_stock:null;
+				res.render('subpages/localmap', {page_name:'drawings', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps});
+				});
 
 app.get('/signin', function(req, res){
-		res.sendFile(path.join(__dirname, '/public/subpages/signin.html'))});
+	let un = (req.user)?req.user.username:null;
+	let pps = (req.user)?req.user.permanant_paint_stock:null;
+	let tps = (req.user)?req.user.temporary_paint_stock:null;
+		res.render('subpages/signin', {page_name:'signin', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps})});
 
 app.get('/login', function(req, res){
-		res.sendFile(path.join(__dirname, '/public/subpages/login.html'))});
+	let un = (req.user)?req.user.username:null;
+	let pps = (req.user)?req.user.permanant_paint_stock:null;
+	let tps = (req.user)?req.user.temporary_paint_stock:null;
+		res.render('subpages/login', {page_name:'login', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps})});
 
 app.get('/success', function(req, res){
 		res.send("Welcome in the community paint the world "+req.query.username+"!!!")});
@@ -108,31 +132,7 @@ app.get('/error', function(req, res){
 
 
 
-/*var passport = require('passport')
-  , FacebookStrategy = require('passport-facebook').Strategy;
 
-
-passport.use(new FacebookStrategy({
-	  clientID: "531127074233558",
-	  clientSecret: "9ee72e56592656c32131840d6932e92f",
-	  callbackURL: "https://paint.antoine-rcbs.ovh/auth/facebook/callback"
-	},
-	function(accessToken, refreshToken, profile, done) {
-	  User.findOrCreate({ facebookId: profile.id }, function(err, user) {
-	    if (err) { return done(err); }
-	    done(null, user);
-	  });
-	 }
-));
-
-app.get('/auth/facebook', passport.authenticate('facebook'));
-
-app.get('/auth/facebook/callback',
-passport.authenticate('facebook', { failureRedirect: '/login' }),
-function(req, res) {
- // Successful authentication, redirect home.
- res.redirect('/');
-});*/
 
 
 
@@ -402,6 +402,10 @@ app.post('/login',
     passport.authenticate('local', { failureRedirect: '/error'}),
     function(req, res) {
 			console.log('Connexion avec succès de ', req.body.username)
-      //res.redirect('/success?username='+req.body.username);
+      console.log(req.user)
 			res.redirect('/')
     });
+app.get('/logout', function(req, res){
+		  req.logout();
+		  res.redirect('/');
+		});

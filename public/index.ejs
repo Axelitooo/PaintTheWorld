@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Paint the world | Main page</title>
+		<!-- LEAFLET-JS IMPORTS -->
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<link rel="stylesheet" href="leaflet/leaflet.css"/>
+		<!-- Make sure you put this AFTER Leaflet's CSS -->
+		<script src="leaflet/leaflet.js"></script>
+	<head>
+
+	<body>
+
+		<!-- When logged in, replace Log in and Join Us by Community and Account -->
+		<!-- Create larger buttons to click on links (and other link properties) -->
+		<!-- Outil de recensement et d'administration des dessins pour troubleshoot-->
+
+		<%-include ('partials/header') %>
+
+		<div id="gamemap"></div>
+
+		<%-include ('partials/footer') %>
+
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="maptest.js"></script>
+
+	</body>
+
+</html>
