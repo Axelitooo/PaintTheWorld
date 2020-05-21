@@ -280,6 +280,15 @@ function sendDrawingsClusters(socket, filt, bounds, msg) {
 	});
 }
 
+
+//Incrémente de 1L les stocks de peinture temporaire de tous les joueurs toutes les 2 minutes
+setInterval(function(){
+	r.table("accounts").update({
+	    temporary_paint_stock: r.row("temporary_paint_stock").add(1)
+	}).run(dbconn);
+}, 120000);
+
+
 /*Ajoute à un dessin des informations sur so milieu géométrique approximatif (barycentre)*/
 function calculateMeanPos(drawing) {
 	var lat = 0;
@@ -403,7 +412,7 @@ app.post('/login',
     function(req, res) {
 			console.log('Connexion avec succès de ', req.body.username)
       console.log(req.user)
-			res.redirect('/')
+			res.redirect('/drawings')
     });
 app.get('/logout', function(req, res){
 		  req.logout();
