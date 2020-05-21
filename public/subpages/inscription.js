@@ -163,17 +163,11 @@ check['password2'] = function() {
     }
 
     myForm.addEventListener('submit', function(e) {
-
         var result = true;
-
         for (var i in check) {
             result = check[i](i) && result;
         }
-
-        //e.preventDefault();
-
     });
-
 })();
 
 
