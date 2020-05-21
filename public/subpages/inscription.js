@@ -1,4 +1,7 @@
 // Fonction de désactivation de l'affichage des "tooltips"
+
+var socket = io()
+
 function deactivateTooltips() {
 
     var tooltips = document.querySelectorAll('.tooltip'),
@@ -147,7 +150,6 @@ check['password2'] = function() {
 
     for (var i = 0; i < inputsLength; i++) {
         inputs[i].addEventListener('keyup', function(e) {
-            //check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
             var result = true;
 
             for (var i in check) {
@@ -155,12 +157,23 @@ check['password2'] = function() {
             }
 
             if (result) {
-                document.getElementById("signin_button").disabled = false;
+                socket.emit('check_username_existant', document.getElementById('username').value)
             } else {
               document.getElementById("signin_button").disabled = true;
             }
         });
     }
+
+    socket.on('is_username_existant', function(result) {
+      if (result) {
+        document.getElementById('username').className = 'incorrect';
+        document.getElementById("signin_button").disabled = true;
+      }
+      else {
+        document.getElementById('username').className = 'correct';
+        document.getElementById("signin_button").disabled = false;
+      }
+    });
 
     myForm.addEventListener('submit', function(e) {
         var result = true;

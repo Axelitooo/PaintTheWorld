@@ -184,7 +184,11 @@ io.on('connection', function(socket) {
 
 		});
 		socket.on('get_random_drawing', function() {
-			sendRandomDrawing(socket, 'random_drawing_loaded')
+			sendRandomDrawing(socket, 'random_drawing_loaded');
+		});
+
+		socket.on('check_username_existant', function(username) {
+			sendIfUsernameExistant(socket, username, 'is_username_existant');
 		});
 
 		//Quand ce client enverra un changement de sa fenêtre d'affichage
@@ -274,8 +278,6 @@ function sendDrawingsClusters(socket, filt, bounds, msg) {
 		});
 
 	});
-
-
 }
 
 /*Ajoute à un dessin des informations sur so milieu géométrique approximatif (barycentre)*/
@@ -294,6 +296,12 @@ function calculateMeanPos(drawing) {
 	drawing.lng = lng/count;
 }
 
+
+function sendIfUsernameExistant(socket, username, msg) {
+  r.table('accounts').filter({username : username}).count().gt(0).run(dbconn, function (err, result) {
+		socket.emit(msg, result);
+	});
+}
 
 
 
@@ -345,13 +353,22 @@ function calculateMeanPos(drawing) {
           	"p_nom": p_nom,
           	"email": email,
           	"username": username,
+						"permanant_paint_stock": 10,
+						"temporary_paint_stock": 100,
           	"password": generateHash(pass1)
           }
-					r.table('accounts').insert(data).run(dbconn, function(err, result) {
-	    			if (err) throw err;
-	    			console.log("Someone joined the community !!! ");
+					r.table('accounts').filter({username : username}).count().gt(0).run(dbconn, function (err, result) {
+						if (!result) {
+							r.table('accounts').insert(data).run(dbconn, function(err, result) {
+			    			if (err) throw err;
+			    			console.log("Someone joined the community !!! ");
+							});
+				      res.redirect('/login')
+						} else {
+							res.send("You've tried to register under an existant username !")
+						}
 					});
-		      res.redirect('/login')
+
       } else {
           res.send("Error. Please respect the seizure rules ! ");
       }
