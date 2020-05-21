@@ -196,7 +196,7 @@ io.on('connection', function(socket) {
 			var minLng = bounds._southWest.lng;
 			var filt = r.row("lat").lt(maxLat).and(r.row("lat").gt(minLat).and(r.row("lng").lt(maxLng).and(r.row("lng").gt(minLng))));
 			//On établit un flitre de requete ReQL pour garder les dessins dans sa zone affichée
-			if (bounds.zoom < 15) {
+			if (bounds.zoom < 16) {
 				sendDrawingsClusters(socket, filt, bounds, "drawings_cluster_loaded");
 			} else {
 				//On envoie tous les dessins de la zone immédiatement à ce client
@@ -256,23 +256,21 @@ function sendDrawingsClusters(socket, filt, bounds, msg) {
 			let vectors = new Array();
 			for (let i = 0 ; i < data.length ; i++) {
 				vectors[i] = {"type": "Feature","geometry": {
-						"type": "Point","coordinates": [data[i]['lat'], data[i]['lng']]
-	  				}
+						"type": "Point","coordinates": [data[i]['lat'], data[i]['lng']],
+					}, "properties":null
 				};
 			}
-			/*if (vectors.length >= 1) {
-				let sc = Supercluster({radius: 40, maxZoom: 16}).load(vectors);
+			if (vectors.length > 1) {
+				let sc = new supercluster({radius: 40, maxZoom: 16});
+				sc.load(vectors);
 				let clusters = sc.getClusters([bounds._southWest.lng, bounds._southWest.lat, bounds._northEast.lng, bounds._northEast.lat], bounds.zoom);
-				console.log(clusters);
-				/*kmeans.clusterize(vectors, {k: ((vectors.length<6)?vectors.length:6)}, (err,res) => {
-			  	if (err) console.error(err);
-			  	else {
-						res.forEach(res => {
-							socket.emit(msg, {centroid : res.centroid, count : res.cluster.length})
-						});
-					}
+				clusters.forEach(cluster => {
+					if (cluster.properties == null) cluster.properties = {point_count: 1};
+					socket.emit(msg, {centroid : cluster.geometry.coordinates, count : cluster.properties.point_count})
 				});
-			}*/
+			} else if (vectors.length == 1) {
+				socket.emit(msg, {centroid : [data[0].lat, data[0].lng], count : 1})
+			}
 		});
 
 	});
