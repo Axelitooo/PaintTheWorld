@@ -79,23 +79,29 @@ app.use(session({
   saveUninitialized: false, cookie: {maxAge: 1000 * 60 * 15}}));
 
 
-	//On fourni au client (web) tous les fichiers dans le dossier "public"
-	//app.use(sslRedirect());
-	app.use(express.static('public', { dotfiles: 'allow' }));
+//On fourni au client (web) tous les fichiers dans le dossier "public"
+//app.use(sslRedirect());
+app.use(express.static('public', { dotfiles: 'allow' }));
 
-	/* Gestion des routes */
+/* Gestion des routes */
 
-	app.get('/signin', function(req, res){
-			res.sendFile(path.join(__dirname, '/public/subpages/signin.html'))});
+app.get('/concept', function(req, res){
+				res.sendFile(path.join(__dirname, '/public/subpages/concept.html'))});
 
-	app.get('/login', function(req, res){
-			res.sendFile(path.join(__dirname, '/public/subpages/login.html'))});
+app.get('/drawings', function(req, res){
+				res.sendFile(path.join(__dirname, '/public/subpages/localmap.html'))});
 
-	app.get('/success', function(req, res){
-			res.send("Welcome in the community paint the world "+req.query.username+"!!!")});
+app.get('/signin', function(req, res){
+		res.sendFile(path.join(__dirname, '/public/subpages/signin.html'))});
 
-	app.get('/error', function(req, res){
-			res.send("error")});
+app.get('/login', function(req, res){
+		res.sendFile(path.join(__dirname, '/public/subpages/login.html'))});
+
+app.get('/success', function(req, res){
+		res.send("Welcome in the community paint the world "+req.query.username+"!!!")});
+
+app.get('/error', function(req, res){
+		res.send("error")});
 
 
 
@@ -347,7 +353,7 @@ function calculateMeanPos(drawing) {
 	    			if (err) throw err;
 	    			console.log("Someone joined the community !!! ");
 					});
-		      res.send("well Registered ! ");
+		      res.redirect('/login')
       } else {
           res.send("Error. Please respect the seizure rules ! ");
       }

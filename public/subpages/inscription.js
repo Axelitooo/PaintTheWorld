@@ -15,7 +15,7 @@ function deactivateTooltips() {
 
 function getTooltip(elements) {
 
-    while (elements = elements.nextSibling) {
+    while (elements == elements.nextSibling) {
         if (elements.className === 'tooltip') {
             return elements;
         }
@@ -30,56 +30,71 @@ function getTooltip(elements) {
 
 var check = {}; // On met toutes nos fonctions dans un objet littéral
 
-check['name'] = function(id) {
+check['name'] = function() {
 
-    var name = document.getElementById(id),
+    var name = document.getElementById('name'),
         tooltipStyle = getTooltip(name).style;
 
     if (name.value.length >= 2) {
         name.className = 'correct';
-        tooltipStyle.display = 'none';
+        if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
         name.className = 'incorrect';
-        tooltipStyle.display = 'inline-block';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
         return false;
     }
 
 };
 
-check['p_nom'] = check['name']   // La fonction pour le prénom est la même que celle du nom
+check['p_nom'] = function() {
 
-check['email'] = function(id) {
+    var name = document.getElementById('p_nom'),
+        tooltipStyle = getTooltip(name).style;
 
-    var name = document.getElementById(id),
+    if (name.value.length >= 2) {
+        name.className = 'correct';
+        if (tooltipStyle) tooltipStyle.display = 'none';
+        return true;
+    } else {
+        name.className = 'incorrect';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
+    }
+
+};
+check['email'] = function() {
+
+    var name = document.getElementById('email'),
         tooltipStyle = getTooltip(name).style;
 
     var regex = /^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
     if (!regex.test(name.value)) {
         name.className = 'incorrect';
-        tooltipStyle.display = 'inline-block';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
     } else {
         name.className = 'correct';
-        tooltipStyle.display = 'none';
-
+        if (tooltipStyle) tooltipStyle.display = 'none';
+        return true;
     }
 
 };
 
 
 
-check['login'] = function() {
+check['username'] = function() {
 
-    var login = document.getElementById('login'),
+    var login = document.getElementById('username'),
         tooltipStyle = getTooltip(login).style;
 
     if (login.value.length >= 4) {
         login.className = 'correct';
-        tooltipStyle.display = 'none';
+        if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
         login.className = 'incorrect';
-        tooltipStyle.display = 'inline-block';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
         return false;
     }
 
@@ -87,17 +102,17 @@ check['login'] = function() {
 
 check['password1'] = function() {
 
-    var password1 = document.getElementById('pwd1'),
+    var password1 = document.getElementById('password1'),
         tooltipStyle = getTooltip(password1).style;
     var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
-    if (!strongRegex.test(password1.value) && password1.value.length < 12) {
+    if (!strongRegex.test(password1.value) && password1.value.length < 8) {
         password1.className = 'incorrect';
-        tooltipStyle.display = 'inline-block';
-        return true;
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
     } else {
         password1.className = 'correct';
-        tooltipStyle.display = 'none';
-        return false;
+        if (tooltipStyle) tooltipStyle.display = 'none';
+        return true;
     }
 
 };
@@ -106,15 +121,15 @@ check['password2'] = function() {
 
     var pwd1 = document.getElementById('password1'),
         pwd2 = document.getElementById('password2'),
-        tooltipStyle = getTooltip(pwd2).style;
+        tooltipStyle = getTooltip(password2).style;
 
     if (password1.value == password2.value && password2.value != '') {
         password2.className = 'correct';
-        tooltipStyle.display = 'none';
+        if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
         password2.className = 'incorrect';
-        tooltipStyle.display = 'inline-block';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
         return false;
     }
 
@@ -132,7 +147,18 @@ check['password2'] = function() {
 
     for (var i = 0; i < inputsLength; i++) {
         inputs[i].addEventListener('keyup', function(e) {
-            check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+            //check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+            var result = true;
+
+            for (var i in check) {
+                result = check[i]() && result;
+            }
+
+            if (result) {
+                document.getElementById("signin_button").disabled = false;
+            } else {
+              document.getElementById("signin_button").disabled = true;
+            }
         });
     }
 
@@ -144,11 +170,7 @@ check['password2'] = function() {
             result = check[i](i) && result;
         }
 
-        if (result) {
-            alert('Le formulaire est bien rempli.');
-        }
-
-        e.preventDefault();
+        //e.preventDefault();
 
     });
 
