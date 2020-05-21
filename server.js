@@ -263,7 +263,7 @@ function sendDrawingsClusters(socket, filt, bounds, msg) {
 			if (vectors.length > 1) {
 				let sc = new supercluster({radius: 40, maxZoom: 16});
 				sc.load(vectors);
-				let clusters = sc.getClusters([bounds._southWest.lng, bounds._southWest.lat, bounds._northEast.lng, bounds._northEast.lat], bounds.zoom);
+				let clusters = sc.getClusters([-180,-90, 180, 90], bounds.zoom);
 				clusters.forEach(cluster => {
 					if (cluster.properties == null) cluster.properties = {point_count: 1};
 					socket.emit(msg, {centroid : cluster.geometry.coordinates, count : cluster.properties.point_count})
