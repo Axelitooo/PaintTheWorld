@@ -107,7 +107,7 @@ check['password1'] = function() {
 
     var password1 = document.getElementById('password1'),
         tooltipStyle = getTooltip(password1).style;
-    var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;;
     if (!strongRegex.test(password1.value) && password1.value.length < 8) {
         password1.className = 'incorrect';
         if (tooltipStyle) tooltipStyle.display = 'inline-block';
