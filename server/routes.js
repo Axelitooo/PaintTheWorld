@@ -36,11 +36,18 @@ module.exports = function(app) {
   	let tps = (req.user)?req.user.temporary_paint_stock:null;
   		res.render('subpages/signin', {page_name:'signin', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps})});
 
+
   app.get('/login', function(req, res){
   	let un = (req.user)?req.user.username:null;
   	let pps = (req.user)?req.user.permanant_paint_stock:null;
   	let tps = (req.user)?req.user.temporary_paint_stock:null;
   		res.render('subpages/login', {page_name:'login', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps})});
+
+  app.get('/account', function(req, res){
+        let un = (req.user)?req.user.username:null;
+        let pps = (req.user)?req.user.permanant_paint_stock:null;
+        let tps = (req.user)?req.user.temporary_paint_stock:null;
+  res.render('subpages/account', {page_name:'account', username: un, permanant_paint_stock: pps, temporary_paint_stock: tps})});
 
   app.get('/success', function(req, res){
   		res.send("Welcome in the community paint the world "+req.query.username+"!!!")});

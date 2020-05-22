@@ -5,13 +5,7 @@ module.exports = function(io, r, dbconn) {
     	//console.log('New connection !');
   		//Quand ce client enverra un "new_drawing", on l'ajoute � la BD
       socket.on('new_drawing', function(data) {
-  				calculateMeanPos(data)
-          //data.datetime = new Date();
-  				//console.log(data);
-          r.table('drawings').insert(data).run(dbconn, function(err, result) {
-      			if (err) throw err;
-      			//console.log(JSON.stringify(result, null, 2));
-  				});
+  				saveNewDrawing(data);
   		});
   		socket.on('get_player_drawings', function() {
   			if (socket.request.user && socket.request.user.logged_in) {
@@ -133,6 +127,57 @@ module.exports = function(io, r, dbconn) {
   	drawing.lng = lng/count;
   }
 
+  function calculateUsedPaint(drawing) {
+    var usedPaint = 0
+    drawing.lines.forEach(line => {
+  		 for (var i = 0; i < line.location.length-1; i++) {
+         usedPaint+=getDistanceFromLatLonInM(line.location[i][0], line.location[i][1],line.location[i+1][0], line.location[i+1][1])*line.thickness;
+       }
+  	});
+    usedPaint/=50000;
+    return Math.round((usedPaint + Number.EPSILON) * 100) / 100;
+  }
+
+  function saveNewDrawing(drawing) {
+    calculateMeanPos(drawing);
+    drawing.datetime = new Date();
+    console.log(drawing);
+    var usedPaint = calculateUsedPaint(drawing);
+    var paintType = (drawing.premium)?"permanant_paint_stock":"temporary_paint_stock";
+    var username = "RootUser42";
+    r.table('accounts').filter({username : username}).getField(paintType).gt(usedPaint).run(dbconn, function (err, result) {
+  		if(!result) {
+        r.table("accounts").filter({username : username}).update({
+      	    [paintType]: r.row(paintType).add(-usedPaint)
+      	}).run(dbconn);
+        r.table('drawings').insert(drawing).run(dbconn, function(err, result) {
+            if (err) throw err;
+        });
+      } else {
+        console.log("Dessin rejeté ! Pas assez de peinture !")
+      }
+  	});
+
+  }
+
+  function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1);
+  var a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c * 1000; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
   function sendIfUsernameExistant(socket, username, msg) {
     r.table('accounts').filter({username : username}).count().gt(0).run(dbconn, function (err, result) {
   		socket.emit(msg, result);
@@ -145,5 +190,13 @@ module.exports = function(io, r, dbconn) {
   	    temporary_paint_stock: r.row("temporary_paint_stock").add(1)
   	}).run(dbconn);
   }, 120000);
+
+  //Supprime de façon régulière les dessins temporaires
+  setInterval(function() {
+    let lifetime = 24*3600;
+    r.table("drawings").filter(function(drawing) {
+    return drawing("datetime").lt(r.now().sub(lifetime)).and(drawing("premium").eq(false))
+}).delete().run(dbconn);
+},60000);
 
 }

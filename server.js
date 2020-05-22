@@ -180,11 +180,14 @@ app.post('/inscription', function(req,res){
 					});
 		      res.redirect('/login')
 				} else {
+					console.log("Someone just failed his inscription")
 					res.send("You've tried to register under an existant username !")
 				}
 			});
 
   } else {
+		console.log("Someone just failed his inscription");
+		console.log(req.body)
       res.send("Error. Please respect the seizure rules ! ");
   }
 })

@@ -17,11 +17,9 @@
     <img src="../images/stains2.jpg" alt="stains2" class="stains" />
   </div>
   <%if (username) {%>
-    <div class="headerbox">
-      <p>Ma peinture : <br/>
-      Temporaire : <%=temporary_paint_stock%> L <br/>
-      Permante : <%=permanant_paint_stock%> L</p>
-    </div>
+    <div class="headerbox" id="account" <%if (page_name === "account") {%> style=<%=selectedStyle%> <% }%>>
+    <a href="/account">Account</a>
+  </div>
     <div class="imagebox">
       <img src="../images/stains3.jpg" alt="stains3" class="stains" />
     </div>

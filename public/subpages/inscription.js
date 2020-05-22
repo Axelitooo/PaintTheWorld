@@ -38,16 +38,25 @@ check['name'] = function() {
     var name = document.getElementById('name'),
         tooltipStyle = getTooltip(name).style;
 
-    if (name.value.length >= 2) {
+    if (name.value == "") {
+        name.className = '';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
+    }
+    else if (name.value.length >= 2) {
         name.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
-        name.className = 'incorrect';
-        if (tooltipStyle) tooltipStyle.display = 'inline-block';
-        return false;
+		setTimeout(timesUp, 2000);
+        function timesUp() {
+            if (name.value.length < 2) {
+                name.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     }
-
 };
 
 check['p_nom'] = function() {
@@ -55,14 +64,24 @@ check['p_nom'] = function() {
     var name = document.getElementById('p_nom'),
         tooltipStyle = getTooltip(name).style;
 
-    if (name.value.length >= 2) {
+    if (name.value == "") {
+        name.className = '';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
+    }
+    else if (name.value.length >= 2) {
         name.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
-        name.className = 'incorrect';
-        if (tooltipStyle) tooltipStyle.display = 'inline-block';
-        return false;
+        setTimeout(timesUp, 2000);
+        function timesUp() {
+            if (name.value.length < 2) {
+                name.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     }
 
 };
@@ -72,10 +91,20 @@ check['email'] = function() {
         tooltipStyle = getTooltip(name).style;
 
     var regex = /^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
-    if (!regex.test(name.value)) {
-        name.className = 'incorrect';
+    if (name.value == "") {
+        name.className = '';
         if (tooltipStyle) tooltipStyle.display = 'inline-block';
         return false;
+    }
+    else if (!regex.test(name.value)) {
+        setTimeout(timesUp, 4000);
+        function timesUp() {
+            if (!regex.test(name.value)) {
+                name.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     } else {
         name.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
@@ -91,14 +120,24 @@ check['username'] = function() {
     var login = document.getElementById('username'),
         tooltipStyle = getTooltip(login).style;
 
-    if (login.value.length >= 4) {
+    if (login.value == "") {
+        login.className = '';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
+    }
+    else if (login.value.length >= 4 ) {
         login.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
-        login.className = 'incorrect';
-        if (tooltipStyle) tooltipStyle.display = 'inline-block';
-        return false;
+        setTimeout(timesUp, 2000);
+        function timesUp() {
+            if (login.value.length < 4) {
+                login.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     }
 
 };
@@ -108,10 +147,20 @@ check['password1'] = function() {
     var password1 = document.getElementById('password1'),
         tooltipStyle = getTooltip(password1).style;
     var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;;
-    if (!strongRegex.test(password1.value) && password1.value.length < 8) {
-        password1.className = 'incorrect';
+    if (password1.value == "") {
+        password1.className = '';
         if (tooltipStyle) tooltipStyle.display = 'inline-block';
         return false;
+    }
+    else if (!strongRegex.test(password1.value) && password1.value.length < 8) {
+        setTimeout(timesUp, 4000);
+        function timesUp() {
+            if (!strongRegex.test(password1.value) && password1.value.length < 8) {
+                password1.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     } else {
         password1.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
@@ -126,16 +175,25 @@ check['password2'] = function() {
         pwd2 = document.getElementById('password2'),
         tooltipStyle = getTooltip(password2).style;
 
-    if (password1.value == password2.value && password2.value != '') {
+    if (pwd2.value == "") {
+        pwd2.className = '';
+        if (tooltipStyle) tooltipStyle.display = 'inline-block';
+        return false;
+    }
+    else if (password1.value == password2.value && password2.value != '') {
         password2.className = 'correct';
         if (tooltipStyle) tooltipStyle.display = 'none';
         return true;
     } else {
-        password2.className = 'incorrect';
-        if (tooltipStyle) tooltipStyle.display = 'inline-block';
-        return false;
+        setTimeout(timesUp, 4000);
+        function timesUp() {
+            if (password1.value !== password2.value) {
+                password2.className = 'incorrect';
+                if (tooltipStyle) tooltipStyle.display = 'inline-block';
+                return false;
+            }
+        }
     }
-
 };
 
 

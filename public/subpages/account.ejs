@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Paint the World | Account</title>
+		<!-- LEAFLET-JS IMPORTS -->
+		<link rel="stylesheet" type="text/css" href="../style.css"/>
+	<head>
+
+	<body>
+
+		<%-include ('../partials/header') %>
+
+		<div id="midbox">
+
+			<div class="conceptbox" id="conceptbox1">
+				<div style="background-image: url(../images/red.jpg); background-position: center; background-repeat: no-repeat; background-size: calc(40px + 4vh + 4vw);">
+					My temporary paint
+				</div>
+				<div class="conceptphrase">
+					<%=temporary_paint_stock%> L => Generate
+				</div>
+			</div>
+
+			<div class="conceptbox" id="conceptbox2">
+				<div style="background-image: url(../images/green.jpg); background-position: center; background-repeat: no-repeat; background-size: calc(40px + 4vh + 4vw);">
+					My permanent paint
+				</div>
+				<div class="conceptphrase">
+					<%=permanant_paint_stock%> L => Purchase
+				</div>
+			</div>
+
+			<div class="conceptbox" id="conceptbox3">
+				<div style="background-image: url(../images/blue.jpg); background-position: center; background-repeat: no-repeat; background-size: calc(40px + 4vh + 4vw);">
+					User achievements
+				</div>
+				<div class="conceptphrase">
+					You painted X pictures and used Y L of temporary and Z L of permanent paint
+				</div>
+			</div>
+
+			<div class="conceptbox" id="conceptbox4">
+				<div style="background-image: url(../images/purple.jpg); background-position: center; background-repeat: no-repeat; background-size: calc(40px + 4vh + 4vw);">
+					Account management
+				</div>
+				<div class="conceptphrase">
+					Change your profile information and preferences
+				</div>
+			</div>
+
+		</div>
+
+		<%-include ('../partials/footer') %>
+
+		<script src="/socket.io/socket.io.js"></script>
+
+	</body>
+
+</html>
