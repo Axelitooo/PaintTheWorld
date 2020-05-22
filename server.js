@@ -156,7 +156,7 @@ app.post('/inscription', function(req,res){
   var pass1 = req.body.password2;
 
   var regex = /^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
-  var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^.&\*])(?=.{8,})/;
+  var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)(?=.{8,})/;
   if ((req.body.name && req.body.p_nom && req.body.email && req.body.username && req.body.password1 && req.body.password2)
       && (req.body.password1 == req.body.password2)
       && (regex.test(req.body.email))
