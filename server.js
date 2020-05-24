@@ -90,7 +90,7 @@ io.use(passportSocketIo.authorize({
 }));
 function onAuthorizeFail(data, message, error, accept){
 		if(error) accept(new Error(message));
-		//console.log('failed connection to socket.io:', message);
+		console.log('failed connection to socket.io:', message);
 		accept(null, false);
 }
 
@@ -142,7 +142,6 @@ app.post('/login',
 passport.authenticate('local', { failureRedirect: '/error'}),
 function(req, res) {
 	console.log('Connexion avec succès de ', req.body.username)
-  console.log(req.user)
 	res.redirect('/drawings')
 });
 /* Ici on gere l'insertion des données du formulaire
@@ -169,14 +168,14 @@ app.post('/inscription', function(req,res){
       	"email": email,
       	"username": username,
 				"permanant_paint_stock": 10,
-				"temporary_paint_stock": 100,
+				"temporary_paint_stock": 15,
       	"password": generateHash(pass1)
       }
 			r.table('accounts').filter({username : username}).count().gt(0).run(dbconn, function (err, result) {
 				if (!result) {
 					r.table('accounts').insert(data).run(dbconn, function(err, result) {
 	    			if (err) throw err;
-	    			console.log("Someone joined the community !!! ");
+	    			console.log(username, " joined the community !!! ");
 					});
 		      res.redirect('/login')
 				} else {
@@ -187,7 +186,6 @@ app.post('/inscription', function(req,res){
 
   } else {
 		console.log("Someone just failed his inscription");
-		console.log(req.body)
       res.send("Error. Please respect the seizure rules ! ");
   }
 })

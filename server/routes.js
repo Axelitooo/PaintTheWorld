@@ -38,6 +38,7 @@ module.exports = function(app) {
 
 
   app.get('/login', function(req, res){
+    //console.log(res.body)
   	let un = (req.user)?req.user.username:null;
   	let pps = (req.user)?req.user.permanant_paint_stock:null;
   	let tps = (req.user)?req.user.temporary_paint_stock:null;

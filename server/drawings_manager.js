@@ -2,10 +2,15 @@ module.exports = function(io, r, dbconn) {
   const supercluster = require('supercluster');
   //Quand un client se connecte
   io.on('connection', function(socket) {
-    	//console.log('New connection !');
   		//Quand ce client enverra un "new_drawing", on l'ajoute � la BD
+
       socket.on('new_drawing', function(data) {
-  				saveNewDrawing(data);
+        if (socket.request.user && socket.request.user.logged_in) {
+          data.player = socket.request.user.username;
+          console.log("Nouveau dessin de :", data.player)
+          saveNewDrawing(socket, data);
+        }
+
   		});
   		socket.on('get_player_drawings', function() {
   			if (socket.request.user && socket.request.user.logged_in) {
@@ -24,6 +29,9 @@ module.exports = function(io, r, dbconn) {
 
   		//Quand ce client enverra un changement de sa fenêtre d'affichage
   		socket.on('bounds_changed',  function(bounds) {
+        if (socket.request.user && socket.request.user.logged_in) {
+          sendPaintLevel(socket, socket.request.user.username, "paint_loaded");
+        }
   			//On récupère les bounds (format leaflet) qu'il envoie
   			var maxLat = bounds._northEast.lat;
   			var minLat = bounds._southWest.lat;
@@ -41,7 +49,6 @@ module.exports = function(io, r, dbconn) {
   					//On essaye de fermer les requètes de changement en écoute en fond
   					socket.drawingsChangesCursor.close().then(function () {
   						//Si on parvient à virer la requete précédente, on lance une veille sur les changements dans la zone
-  						//console.log("cursor closed")
   						scopeForChanges(socket, filt);
   	    		})
   	    		.catch(r.Error.ReqlDriverError, function (err) {
@@ -60,7 +67,6 @@ module.exports = function(io, r, dbconn) {
   	r.table('drawings').filter(filt).changes().run(dbconn, function(err, cursor) {
   		socket.drawingsChangesCursor = cursor;
   		cursor.each(function(err, item) {
-  			console.log("New drawing detected !");
   			socket.emit("drawings_updated", item); //On notifie le client avec le changement
   		});
   	});
@@ -77,6 +83,13 @@ module.exports = function(io, r, dbconn) {
 
   function sendRandomDrawing(socket, msg) {
   	r.table('drawings').sample(1).run(dbconn, function(err, cursor) {
+  		cursor.each(function(err, item) {
+  			socket.emit(msg, item); //Envoi de chaque dessin de la zone un par un
+  		});
+  	});
+  }
+  function sendPaintLevel(socket, username, msg) {
+  	r.table('accounts').pluck("username", "permanant_paint_stock", "temporary_paint_stock").filter({username : username}).run(dbconn, function(err, cursor) {
   		cursor.each(function(err, item) {
   			socket.emit(msg, item); //Envoi de chaque dessin de la zone un par un
   		});
@@ -138,21 +151,20 @@ module.exports = function(io, r, dbconn) {
     return Math.round((usedPaint + Number.EPSILON) * 100) / 100;
   }
 
-  function saveNewDrawing(drawing) {
+  function saveNewDrawing(socket, drawing) {
     calculateMeanPos(drawing);
     drawing.datetime = new Date();
-    console.log(drawing);
     var usedPaint = calculateUsedPaint(drawing);
     var paintType = (drawing.premium)?"permanant_paint_stock":"temporary_paint_stock";
-    var username = "RootUser42";
-    r.table('accounts').filter({username : username}).getField(paintType).gt(usedPaint).run(dbconn, function (err, result) {
+    r.table('accounts').filter({username : drawing.player}).getField(paintType).gt(usedPaint).run(dbconn, function (err, result) {
   		if(!result) {
-        r.table("accounts").filter({username : username}).update({
+        r.table("accounts").filter({username : drawing.player}).update({
       	    [paintType]: r.row(paintType).add(-usedPaint)
       	}).run(dbconn);
         r.table('drawings').insert(drawing).run(dbconn, function(err, result) {
             if (err) throw err;
         });
+        sendPaintLevel(socket, drawing.player, "paint_loaded");
       } else {
         console.log("Dessin rejeté ! Pas assez de peinture !")
       }
