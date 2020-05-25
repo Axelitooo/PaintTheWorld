@@ -5,7 +5,8 @@ Voici notre projet **WEB**, réalisé dans le cadre de la 3ème année au dépar
 
 ## Architecture
 
-Ce projet s'articule autour de 2 composants : un site web et une application. To be continued ...
+Ce projet s'articule autour de 3 composants : un site web, un serveur et une application Android.
+![](./WEB.png)
 
 ## Utilisation
 
