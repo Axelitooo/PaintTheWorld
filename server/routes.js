@@ -59,4 +59,6 @@ module.exports = function(app) {
       		  req.logout();
       		  res.redirect('/');
       		});
+  app.get('/download', function(req, res){
+       res.sendFile(path.resolve('./public/Paint-the-world-alpha.apk') );});
 }
